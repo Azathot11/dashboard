@@ -1,18 +1,29 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { FiSettings } from "react-icons/fi";
-import { TooltipComponent } from "@syncfusion/ej2-react-popups";
-import {Navbar,Footer,Sidebar,ThemeSettings} from './components';
-import {Ecommerce,Orders,Employees,Customers,Calendar,Kanban,ColorPicker,Line,Area,Bar,Pie,Financial,ColorMapping,Pyramid,Stacked,Editor} from './pages'
-import {useStateContext}  from './contexts/ContextProvider'
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { FiSettings } from 'react-icons/fi';
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
-import "./App.css";
+import { Navbar, Footer, Sidebar, ThemeSettings } from './components';
+import { Ecommerce, Orders, Calendar, Employees, Stacked, Pyramid, Customers, Kanban, Line, Area, Bar, Pie, Financial, ColorPicker, ColorMapping, Editor } from './pages';
+import './App.css';
+
+import { useStateContext } from './contexts/ContextProvider';
 
 const App = () => {
-  const {activeMenu,themeSettings,setThemeSettings,currentColor,currentMode} = useStateContext();
+  const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
+
+  useEffect(() => {
+    const currentThemeColor = localStorage.getItem('colorMode');
+    const currentThemeMode = localStorage.getItem('themeMode');
+    if (currentThemeColor && currentThemeMode) {
+      setCurrentColor(currentThemeColor);
+      setCurrentMode(currentThemeMode);
+    }
+  }, []);
+
   return (
-    <div className={currentMode === 'Dark' ? 'dark' :''}>
-     <BrowserRouter>
+    <div className={currentMode === 'Dark' ? 'dark' : ''}>
+      <BrowserRouter>
         <div className="flex relative dark:bg-main-dark-bg">
           <div className="fixed right-4 bottom-4" style={{ zIndex: '1000' }}>
             <TooltipComponent
@@ -21,12 +32,13 @@ const App = () => {
             >
               <button
                 type="button"
-                style={{ background: currentColor, borderRadius: "50%" }}
+                onClick={() => setThemeSettings(true)}
+                style={{ background: currentColor, borderRadius: '50%' }}
                 className="text-3xl text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
-                onClick={()=>setThemeSettings(true)}
               >
-               <FiSettings />
+                <FiSettings />
               </button>
+
             </TooltipComponent>
           </div>
           {activeMenu ? (
@@ -49,8 +61,9 @@ const App = () => {
               <Navbar />
             </div>
             <div>
-              {themeSettings && <ThemeSettings/>}
-          <Routes>
+              {themeSettings && (<ThemeSettings />)}
+
+              <Routes>
                 {/* dashboard  */}
                 <Route path="/" element={(<Ecommerce />)} />
                 <Route path="/ecommerce" element={(<Ecommerce />)} />
@@ -77,7 +90,8 @@ const App = () => {
                 <Route path="/stacked" element={<Stacked />} />
 
               </Routes>
-          </div>
+            </div>
+            <Footer />
           </div>
         </div>
       </BrowserRouter>
